@@ -1,0 +1,1 @@
+This repository is intended to work through a variety of algorithms and data structures practice in C++.
