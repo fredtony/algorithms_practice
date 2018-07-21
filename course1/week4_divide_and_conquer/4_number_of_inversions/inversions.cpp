@@ -9,7 +9,22 @@ long long get_number_of_inversions(vector<int> &a, vector<int> &b, size_t left, 
     size_t ave = left + (right - left) / 2;
     number_of_inversions += get_number_of_inversions(a, b, left, ave);
     number_of_inversions += get_number_of_inversions(a, b, ave, right);
-    //write your code here
+    int j = left, k = ave;
+    for (int i = left; i < right; ++i) {
+        int l = a[j], r = a[k];
+        if ((l <= r and j != ave) or k == right) {
+            b[i] = l;
+            j++;
+        }
+        else {
+            b[i] = r;
+            k++;
+            number_of_inversions += (ave - j);
+        }
+    }
+    for (int i = left; i < right; ++i) {
+        a[i] = b[i];
+    }
     return number_of_inversions;
 }
 
