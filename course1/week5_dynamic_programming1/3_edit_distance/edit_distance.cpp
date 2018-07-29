@@ -1,17 +1,29 @@
 #include <iostream>
 #include <string>
 
-using std::string;
+using namespace std;
 
 int edit_distance(const string &str1, const string &str2) {
-  //write your code here
-  return 0;
+	int n = str1.length(), m = str2.length(), val;
+	int dist[m+1][n+1] = {n+m};
+	dist[0][0] = 0;
+	for (int i=1; i<=n; ++i)
+		dist[0][i] = dist[0][i-1] + 1;
+	for (int j=1; j<=m; ++j)
+		dist[j][0] = dist[j-1][0] + 1;
+	for (int i=1; i<=m; ++i) {
+		for (int j=1; j<=n; ++j) {
+			val = (int)(str1[i-1] != str2[j-1]);
+			dist[j][i] = min(min(dist[j-1][i-1] + val, dist[j][i-1]+1), dist[j-1][i]+1);
+		}
+	}
+	return dist[n][m];
 }
 
 int main() {
-  string str1;
-  string str2;
-  std::cin >> str1 >> str2;
-  std::cout << edit_distance(str1, str2) << std::endl;
-  return 0;
+	string str1;
+	string str2;
+	cin >> str1 >> str2;
+	cout << edit_distance(str1, str2) << endl;
+	return 0;
 }
