@@ -13,11 +13,11 @@ int edit_distance(const string &str1, const string &str2) {
 		dist[j][0] = dist[j-1][0] + 1;
 	for (int i=1; i<=m; ++i) {
 		for (int j=1; j<=n; ++j) {
-			val = (int)(str1[i-1] != str2[j-1]);
-			dist[j][i] = min(min(dist[j-1][i-1] + val, dist[j][i-1]+1), dist[j-1][i]+1);
+			val = (int)(str2[i-1] != str1[j-1]);
+			dist[i][j] = min(min(dist[i-1][j-1] + val, dist[i][j-1]+1), dist[i-1][j]+1);
 		}
 	}
-	return dist[n][m];
+	return dist[m][n];
 }
 
 int main() {
