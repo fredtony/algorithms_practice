@@ -1,25 +1,36 @@
 #include <iostream>
 #include <vector>
 
-using std::vector;
+using namespace std;
 
 int optimal_weight(int W, const vector<int> &w) {
-  //write your code here
-  int current_weight = 0;
-  for (size_t i = 0; i < w.size(); ++i) {
-    if (current_weight + w[i] <= W) {
-      current_weight += w[i];
+    int weights[w.size()+1][W+1], val;
+    for (int i=0; i<=w.size(); ++i)
+        weights[i][0] = 0;
+    for (int j=1; j<=W; ++j)
+        weights[0][j] = 0;
+    for (int i=1; i<=w.size(); ++i) {
+        val = w[i-1];
+        // cout << val << "   ";
+        for (int j=1; j<=W; ++j) {
+            if ((val + weights[i-1][j-val] > j) || (j < val))
+                weights[i][j] = weights[i-1][j];
+            else
+                weights[i][j] = max(max(weights[i-1][j-val] + val, weights[i-1][j]), weights[i][j-1]);
+            // cout << weights[i][j] << ' ';
+        }
+        // cout << endl;
     }
-  }
-  return current_weight;
+    return weights[w.size()][W];
 }
 
 int main() {
-  int n, W;
-  std::cin >> W >> n;
-  vector<int> w(n);
-  for (int i = 0; i < n; i++) {
-    std::cin >> w[i];
-  }
-  std::cout << optimal_weight(W, w) << '\n';
+    int n, W;
+    cin >> W >> n;
+    vector<int> w(n);
+    for (int i = 0; i < n; i++) {
+        cin >> w[i];
+    }
+    cout << optimal_weight(W, w) << '\n';
+    return 0;
 }
