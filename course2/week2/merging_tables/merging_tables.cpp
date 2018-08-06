@@ -4,11 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-using std::cin;
-using std::cout;
-using std::endl;
-using std::max;
-using std::vector;
+using namespace std;
 
 struct DisjointSetsElement {
 	int size, parent, rank;
@@ -28,16 +24,36 @@ struct DisjointSets {
 	}
 
 	int getParent(int table) {
-		// find parent and compress path
+		if (sets[table].parent == table)
+			return table;
+		int par = sets[table].parent;
+		if (sets[par].parent == par)
+			return par;
+		else {
+			sets[table].parent = getParent(par);
+			return sets[table].parent;
+		}
 	}
 
 	void merge(int destination, int source) {
 		int realDestination = getParent(destination);
 		int realSource = getParent(source);
+		int parent, child;
 		if (realDestination != realSource) {
-			// merge two components
-			// use union by rank heuristic
-                        // update max_table_size
+			if (sets[realSource].rank > sets[realDestination].rank) {
+				parent = realSource;
+				child = realDestination;
+			}
+			else {
+				parent = realDestination;
+				child = realSource;
+			}
+			if (parent == child) {
+				sets[parent].rank++;
+			}
+			sets[parent].size += sets[child].size;
+			max_table_size = max(max_table_size, sets[parent].size);
+			sets[child].parent = parent;
 		}		
 	}
 };
@@ -55,11 +71,11 @@ int main() {
 	for (int i = 0; i < m; i++) {
 		int destination, source;
 		cin >> destination >> source;
-                --destination;
-                --source;
+        --destination;
+        --source;
 		
 		tables.merge(destination, source);
-	        cout << tables.max_table_size << endl;
+	    cout << tables.max_table_size << endl;
 	}
 
 	return 0;
