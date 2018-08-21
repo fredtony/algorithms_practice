@@ -61,7 +61,7 @@ maj_element get_majority_element(vector<int> &a, maj_element overall) {
     return overall;
 }
 
-int get_majority_element_fast(vector<int> $b) {
+int get_majority_element_fast(vector<int> &b) {
     unordered_map<int, int> counts;
     int total = 0;
     for (int i=0; i < b.size(); ++i) {

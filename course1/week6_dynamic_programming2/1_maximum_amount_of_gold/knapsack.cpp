@@ -4,15 +4,19 @@
 using namespace std;
 
 int optimal_weight(int W, const vector<int> &w) {
-    int weights[w.size()+1][W+1], val;
-    for (int i=0; i<=w.size(); ++i)
+    int** weights = new int*[w.size()+1];
+    for(int i = 0; i <= w.size(); ++i)
+        weights[i] = new int[W+1];
+    // int weights[][W+1], val;
+    int val;
+    for (int i = 0; i <= w.size(); ++i)
         weights[i][0] = 0;
-    for (int j=1; j<=W; ++j)
+    for (int j = 1; j <= W; ++j)
         weights[0][j] = 0;
-    for (int i=1; i<=w.size(); ++i) {
+    for (int i = 1; i <= w.size(); ++i) {
         val = w[i-1];
         // cout << val << "   ";
-        for (int j=1; j<=W; ++j) {
+        for (int j = 1; j <= W; ++j) {
             if ((val + weights[i-1][j-val] > j) || (j < val))
                 weights[i][j] = weights[i-1][j];
             else

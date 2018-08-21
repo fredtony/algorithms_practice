@@ -23,14 +23,14 @@ int gcd_fast(int a, int b) {
   }
 }
 
-void test_solution() {
-    assert(gcd_fast(3, 6) == 3);
-    assert(gcd_fast(331, 662) == 331);
-    for (int a = 1; a < 20; ++a) {
-      for (int b = 1; b < 20, ++b)
-        assert(gcd_fast(a, b) == gcd_naive(a, b));
-    }
-}
+// void test_solution() {
+//     assert(gcd_fast(3, 6) == 3);
+//     assert(gcd_fast(331, 662) == 331);
+//     for (int a = 1; a < 20; ++a) {
+//       for (int b = 1; b < 20, ++b)
+//         assert(gcd_fast(a, b) == gcd_naive(a, b));
+//     }
+// }
 
 int main() {
   int a, b;

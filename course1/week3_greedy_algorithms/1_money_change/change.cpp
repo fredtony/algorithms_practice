@@ -15,11 +15,12 @@ int get_change(int m) {
 		}
 		coins += 1;
 	}
-	return n;
+	return coins;
 }
 
 int main() {
   int m;
   std::cin >> m;
   std::cout << get_change(m) << '\n';
+  return 0;
 }

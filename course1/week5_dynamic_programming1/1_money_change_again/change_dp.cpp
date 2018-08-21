@@ -18,4 +18,5 @@ int main() {
 	int m;
 	cin >> m;
 	cout << get_change(m) << '\n';
+	return 0;
 }

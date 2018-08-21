@@ -36,4 +36,5 @@ int main() {
     for (size_t i = 0; i < sequence.size(); ++i) {
         cout << sequence[i] << " ";
     }
+    return 0;
 }
