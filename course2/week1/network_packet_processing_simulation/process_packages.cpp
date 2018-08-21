@@ -3,20 +3,14 @@
 #include <vector>
 
 struct Request {
-    Request(int arrival_time, int process_time):
-        arrival_time(arrival_time),
-        process_time(process_time)
-    {}
+    Request(int arrival_time, int process_time): arrival_time(arrival_time), process_time(process_time) {}
 
     int arrival_time;
     int process_time;
 };
 
 struct Response {
-    Response(bool dropped, int start_time):
-        dropped(dropped),
-        start_time(start_time)
-    {}
+    Response(bool dropped, int start_time): dropped(dropped), start_time(start_time) {}
 
     bool dropped;
     int start_time;
@@ -24,30 +18,34 @@ struct Response {
 
 class Buffer {
 public:
-    Buffer(int size):
-        size_(size),
-        finish_time_()
-    {}
+    Buffer(int size): size_(size), finish_time_() {}
 
     Response Process(const Request &request) {
-        while (!this->finish_time_.empty() and request.arrival_time >= this->finish_time_.front()) {
-            this->finish_time_.pop();
+        while (!finish_time_.empty() && request.arrival_time >= finish_time_.front()) {
+            finish_time_.pop();
         }
-        if (this->finish_time_.empty()) {
-            this->finish_time_.push(request.arrival_time + request.process_time);
+        if (finish_time_.empty()) {
+            latest_finish = request.arrival_time + request.process_time;
+            finish_time_.push(latest_finish);
+            // std::cout << "Queue empty. Adding " << latest_finish << " to queue. Start time " << request.arrival_time << std::endl;
             return Response(false, request.arrival_time);
         }
-        else if (this->finish_time_.size() < this->size_) {
-            int start_time = this->finish_time_.front();
-            this->finish_time_.push(start_time + request.process_time);
-            return Response(false, start_time);
+        else if (finish_time_.size() < size_) {
+            // std::cout << "Queue non-empty. Adding " << latest_finish + request.process_time << " to end of queue. Start time " << latest_finish << std::endl;
+            Response resp = Response(false, latest_finish);
+            latest_finish = latest_finish + request.process_time;
+            finish_time_.push(latest_finish);
+            return resp;
         }
-        else
+        else {
+            // std::cout << "Dropped response." << std::endl;
             return Response(true, 0);
+        }
     }
 private:
     int size_;
     std::queue <int> finish_time_;
+    int latest_finish;
 };
 
 std::vector <Request> ReadRequests() {
