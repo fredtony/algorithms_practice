@@ -20,42 +20,50 @@ Data read_input() {
     return data;
 }
 
-void print_occurrences(const vector<int>& output) {
-    for (int i = (int)output.size()-1; i >= 0; --i)
+void print_occurrences(const vector<long long>& output) {
+    for (long long i = (long long)output.size()-1; i >= 0; --i)
         cout << output[i] << " ";
     cout << "\n";
 }
 
-vector<int> get_occurrences(const Data& input) {
+vector<long long> get_occurrences(const Data& input) {
     const string& s = input.pattern, t = input.text;
-    static const ull prime = 1000000007;
-    vector<int> ans;
-    ull pattern_hash = 0, input_hash = 0;
-    for (int i = (int)s.size() - 1; i >= 0; --i) {
-        pattern_hash = (pattern_hash * 26) % prime;
-        pattern_hash = (pattern_hash + (ull)(s[i] - 'A')) % prime;
+    static const ull prime = 1000000007, mult = 100;
+    vector<long long> ans;
+    ull pattern_hash = 0, input_hash = 0, y = 1;
+    for (long long i = (long long)s.size() - 1; i >= 0; --i) {
+        y = (y * mult) % prime;
+        pattern_hash = (pattern_hash * mult) % prime;
+        pattern_hash = (pattern_hash + (ull)(s[i])) % prime;
     }
     // cout << "pattern hash: " << pattern_hash << std::endl;
-    for (int i = (int)t.size() - 1; i >= (int)(t.size() - s.size()); --i) {
-        input_hash = (input_hash * 26) % prime;
-        input_hash = (input_hash + (ull)(t[i] - 'A')) % prime;
+    for (long long i = (long long)t.size() - 1; i >= (long long)(t.size() - s.size()); --i) {
+        input_hash = (input_hash * mult) % prime;
+        input_hash = (input_hash + (ull)(t[i])) % prime;
     }
     // cout << "text hash: " << input_hash << std::endl;
     if (pattern_hash == input_hash) {
         if (t.compare(t.size() - s.size(), s.size(), s) == 0)
-            ans.push_back((int)(t.size() - s.size()));
+            ans.push_back((long long)(t.size() - s.size()));
     }
-    for (int i = (int)t.size() - s.size() - 1; i >= 0; --i) {
-        input_hash = (input_hash - (ull)(t[i+s.size()] - 'A') * (ull)pow(26, s.size()-1) + prime) % prime;
-        input_hash = (input_hash * 26) % prime;
-        input_hash = (input_hash + (ull)(t[i] - 'A')) % prime;
-        // cout << "text hash: " << input_hash << std::endl;
+    for (long long i = (long long)(t.size() - s.size() - 1); i >= 0; --i) {
+        input_hash = (((input_hash * mult + prime - ((ull)(t[i+s.size()] * y) % prime)) % prime) + (ull)(t[i]) + prime) % prime;
+        // cout << "text hash " << i << ":\t" << input_hash << std::endl;
         if (pattern_hash == input_hash)
             if (t.compare(i, s.size(), s) == 0)
-                ans.push_back((int)i);
+                ans.push_back((long long)i);
     }
     return ans;
 }
+
+// vector<long long> get_occurrences_naive(const Data& input) {
+// }
+
+// void test_solution() {
+//     long long num_checks = 1000, pattern_size = 10, text_size = 1000;
+//     for (long long i = 0; i < num_checks; ++i) {
+//     }
+// }
 
 
 int main() {

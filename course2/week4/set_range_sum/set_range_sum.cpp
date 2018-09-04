@@ -22,6 +22,8 @@ struct Vertex {
 	: key(key), sum(sum), left(left), right(right), parent(parent) {}
 };
 
+void printTree(struct Vertex* curr, int depth);
+
 void update(Vertex* v) {
 	if (v == NULL) return;
 	v->sum = v->key + (v->left != NULL ? v->left->sum : 0ll) + (v->right != NULL ? v->right->sum : 0ll);
@@ -151,31 +153,40 @@ Vertex* merge(Vertex* left, Vertex* right) {
 // Code that uses splay tree to solve the problem
 
 Vertex* root = NULL;
+bool debug = false;
 
 void insert(int x) {
 	Vertex* left = NULL;
 	Vertex* right = NULL;
-	Vertex* new_vertex = NULL;  
-	split(root, x, left, right);
-	if (right == NULL || right->key != x) {
+	Vertex* new_vertex = find(root, x);
+	if (new_vertex == NULL || new_vertex->key != x) {
+		split(root, x, left, right);
 		new_vertex = new Vertex(x, x, NULL, NULL, NULL);
+		root = merge(left, merge(new_vertex, right));
 	}
-	root = merge(merge(left, new_vertex), right);
+	if (debug) printTree(root, 0);
 }
 
-void erase(int x) {                   
-	Vertex* left = NULL;
-	Vertex* right = NULL;
-	Vertex* found = find(root, x);
+void erase(int x) {
+	Vertex* found = find(root, x);              
 	if (found != NULL && found->key == x) {
-		split(root, x, left, right);
+		Vertex* left = NULL;
+		Vertex* temp_left = NULL;
+		Vertex* right = NULL;
+		Vertex* temp_right = NULL;
+		split(root, x, left, temp_right);
+		split(temp_right, x + 1, temp_left, right);
 		if (right != NULL) {
-		    root = merge(merge(left, right->left), right->right);
-		}
-		else {
-		    root = left;
+			if (left != NULL) {
+				root = merge(left, right);
+			} else {
+				root = right;
+			}
+		} else {
+			root = left;
 		}
 	}
+	if (debug) printTree(root, 0);
 	return;
 }
 
@@ -190,9 +201,10 @@ bool find(int x) {
 long long sum(int from, int to) {
 	Vertex* left = NULL;
 	Vertex* middle = NULL;
+	Vertex* temp_middle = NULL;
 	Vertex* right = NULL;
-	split(root, from, left, middle);
-	split(middle, to + 1, middle, right);
+	split(root, from, left, temp_middle);
+	split(temp_middle, to + 1, middle, right);
 	long long ans = 0;
 	if (middle != NULL) {
 	    ans = middle->sum;
@@ -202,6 +214,28 @@ long long sum(int from, int to) {
 }
 
 const int MODULO = 1000000001;
+
+int rec[1000006];
+void printTree(struct Vertex* curr, int depth) {
+	int i;
+	if (curr == NULL) return;
+	cout << "\t";
+	string tmp_str;
+	for(i = 0; i < depth; i++) {
+		if(i == depth - 1) {
+			tmp_str = rec[depth-1] ? "+" : "L";
+			cout << tmp_str << "---";
+		} else {
+			tmp_str = rec[i] ? "|" : "  ";
+			cout << tmp_str << "   ";
+		}
+	}
+	cout << curr->key << "\n";
+	rec[depth] = 1;
+	printTree(curr->left, depth + 1);
+	rec[depth] = 0;
+	printTree(curr->right, depth + 1);
+}
 
 int main() {
 	int n;
@@ -215,18 +249,20 @@ int main() {
 				int x;
 				cin >> x;
 				insert((x + last_sum_result) % MODULO);
+				if (debug) cout << "   Added " << ((x + last_sum_result) % MODULO) << std::endl;
 			} break;
 			case '-' : {
 				int x;
 				cin >> x;
 				erase((x + last_sum_result) % MODULO);
+				if (debug) cout << "   Erased " << ((x + last_sum_result) % MODULO) << std::endl;
 			} break;            
 			case '?' : {
 				int x;
 				cin >> x;
 				string find_result;
 				find_result = find((x + last_sum_result) % MODULO) ? "Found" : "Not found";
-				cout << find_result <<std::endl;
+				cout << find_result << std::endl;
 			} break;
 			case 's' : {
 				int l, r;
@@ -236,6 +272,14 @@ int main() {
 				last_sum_result = int(res % MODULO);
 			}
 		}
+		// if (i == 64) {
+		// 	cout << "  After 64:  \n";
+		// 	printTree(root, 0);
+		// }
+		// if (i == 65) {
+		// 	cout << "  After 65:  \n";
+		// 	printTree(root, 0);
+		// }
 	}
 	return 0;
 }
